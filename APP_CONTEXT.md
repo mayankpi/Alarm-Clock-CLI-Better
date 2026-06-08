@@ -33,6 +33,32 @@ The app supports persistent alarms with management commands:
 
 When a one-shot alarm is due, the run service prints alarm details, emits terminal bell characters, and marks the alarm as completed. When a daily repeating alarm is due, the service prints the same alert and reschedules it to the next future day.
 
+## Feature Inventory
+
+| Feature | Access path | Notes |
+| --- | --- | --- |
+| Add a one-time alarm | `python alarm_clock.py add 07:30` | Schedules the next local occurrence of the time. |
+| Add a labeled alarm | `python alarm_clock.py add 07:30 "Morning Workout"` | Defaults to `Alarm` when no label is provided. |
+| Add a daily repeating alarm | `python alarm_clock.py add 07:30 "Morning Workout" --repeat daily` | Repeats after each trigger. |
+| List stored alarms | `python alarm_clock.py list` | Shows ID, time, status, repeat mode, and label. |
+| Remove an alarm | `python alarm_clock.py remove <id>` | Deletes the matching alarm from JSON storage. |
+| Edit alarm time | `python alarm_clock.py edit <id> --time 08:00` | Reschedules and reopens the alarm as pending. |
+| Edit alarm label | `python alarm_clock.py edit <id> --label "Gym"` | Keeps the current time. |
+| Snooze default duration | `python alarm_clock.py snooze <id>` | Defaults to 10 minutes. |
+| Snooze custom duration | `python alarm_clock.py snooze <id> 5m` | Accepts seconds, minutes, and hours. |
+| Enable repeat | `python alarm_clock.py repeat <id> daily` | Current repeat support is daily only. |
+| Disable repeat | `python alarm_clock.py repeat <id> none` | Leaves the alarm otherwise unchanged. |
+| Run monitor service | `python alarm_clock.py run` | Polls pending alarms at most once per second. |
+| Demo/test run mode | `python alarm_clock.py run --exit-when-idle` | Exits when no pending alarms exist. |
+| Trigger due alarms | `python alarm_clock.py run` | Terminal bell plus printed alarm details. |
+| Persist alarms | Built in | Default path is `~/.alarm_clock_alarms.json`. |
+| Use custom storage | `python alarm_clock.py --storage ./alarms.json list` | Useful for tests, demos, and isolated runs. |
+| Export alarms | `python alarm_clock.py export ./alarms-backup.json` | Writes current alarms to another JSON file. |
+| Import alarms by merging | `python alarm_clock.py import ./alarms-backup.json` | Conflicting imported IDs are regenerated. |
+| Import alarms by replacing | `python alarm_clock.py import ./alarms-backup.json --replace` | Replaces current storage contents. |
+| Invalid input handling | Built in | CLI reports validation errors without tracebacks. |
+| Storage error handling | Built in | Corrupt JSON and read/write failures become user-facing errors. |
+
 ## Architecture
 
 Current implementation is in [alarm_clock.py](alarm_clock.py), organized into these logical layers:

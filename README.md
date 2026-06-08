@@ -4,6 +4,33 @@ A production-minded Python command-line alarm clock for a senior engineering bui
 
 The app intentionally stays small, but it now supports the core alarm lifecycle: create, list, edit, snooze, repeat, remove, import/export, run, trigger, and persist alarms.
 
+## Feature List
+
+| Feature | How to access it |
+| --- | --- |
+| Add a one-time alarm | `python alarm_clock.py add 07:30` |
+| Add a labeled alarm | `python alarm_clock.py add 07:30 "Morning Workout"` |
+| Add a daily repeating alarm | `python alarm_clock.py add 07:30 "Morning Workout" --repeat daily` |
+| List stored alarms | `python alarm_clock.py list` |
+| Remove an alarm | `python alarm_clock.py remove <id>` |
+| Edit alarm time | `python alarm_clock.py edit <id> --time 08:00` |
+| Edit alarm label | `python alarm_clock.py edit <id> --label "Gym"` |
+| Edit time and label together | `python alarm_clock.py edit <id> --time 08:00 --label "Gym"` |
+| Snooze for the default 10 minutes | `python alarm_clock.py snooze <id>` |
+| Snooze for a custom duration | `python alarm_clock.py snooze <id> 5m` |
+| Enable daily repeat | `python alarm_clock.py repeat <id> daily` |
+| Disable repeat | `python alarm_clock.py repeat <id> none` |
+| Run the alarm monitor | `python alarm_clock.py run` |
+| Exit run mode when no alarms are pending | `python alarm_clock.py run --exit-when-idle` |
+| Trigger due alarms | Start `python alarm_clock.py run`; due alarms ring automatically |
+| Persist alarms | Built in; uses `~/.alarm_clock_alarms.json` by default |
+| Use custom storage | `python alarm_clock.py --storage .\alarms.json list` |
+| Export alarms | `python alarm_clock.py export .\alarms-backup.json` |
+| Import alarms by merging | `python alarm_clock.py import .\alarms-backup.json` |
+| Import alarms by replacing existing storage | `python alarm_clock.py import .\alarms-backup.json --replace` |
+| Handle invalid input gracefully | Built in; CLI prints validation errors |
+| Handle corrupted or unavailable storage gracefully | Built in; CLI prints storage errors |
+
 ## Commands
 
 Requires Python 3.10 or newer.
