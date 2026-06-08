@@ -2,7 +2,7 @@
 
 A production-minded Python command-line alarm clock for a senior engineering build exercise.
 
-The app intentionally stays small, but it now supports the core alarm lifecycle: create, list, remove, run, trigger, and persist alarms.
+The app intentionally stays small, but it now supports the core alarm lifecycle: create, list, edit, snooze, repeat, remove, import/export, run, trigger, and persist alarms.
 
 ## Commands
 
@@ -20,6 +20,12 @@ Add an alarm with a label:
 python alarm_clock.py add 07:30 "Morning Workout"
 ```
 
+Add a daily repeating alarm:
+
+```powershell
+python alarm_clock.py add 07:30 "Morning Workout" --repeat daily
+```
+
 List alarms:
 
 ```powershell
@@ -30,6 +36,54 @@ Remove an alarm:
 
 ```powershell
 python alarm_clock.py remove <id>
+```
+
+Snooze an alarm for 10 minutes:
+
+```powershell
+python alarm_clock.py snooze <id>
+```
+
+Snooze with an explicit duration:
+
+```powershell
+python alarm_clock.py snooze <id> 5m
+```
+
+Edit an alarm:
+
+```powershell
+python alarm_clock.py edit <id> --time 08:00 --label "Gym"
+```
+
+Make an alarm repeat daily:
+
+```powershell
+python alarm_clock.py repeat <id> daily
+```
+
+Turn repeat off:
+
+```powershell
+python alarm_clock.py repeat <id> none
+```
+
+Export alarms:
+
+```powershell
+python alarm_clock.py export .\alarms-backup.json
+```
+
+Import alarms:
+
+```powershell
+python alarm_clock.py import .\alarms-backup.json
+```
+
+Replace existing alarms during import:
+
+```powershell
+python alarm_clock.py import .\alarms-backup.json --replace
 ```
 
 Run the alarm service:
@@ -47,10 +101,12 @@ python alarm_clock.py --storage .\alarms.json add 07:30 "Morning Workout"
 ## Current Behavior
 
 - Alarm times use local 24-hour clock input: `HH:MM` or `HH:MM:SS`.
+- Snooze durations use values like `30s`, `10m`, `1h30m`, or `1h 5m 10s`.
 - If the time already passed today, the alarm is scheduled for tomorrow.
 - Alarms are stored in JSON at `~/.alarm_clock_alarms.json` by default.
 - `run` polls pending alarms once per second.
-- When an alarm triggers, the app emits terminal bell characters, prints alarm details, and marks the alarm completed.
+- When a one-shot alarm triggers, the app emits terminal bell characters, prints alarm details, and marks the alarm completed.
+- When a daily repeating alarm triggers, the app emits the alert and reschedules it for the next future day.
 
 ## Requirements And Design Context
 
@@ -59,7 +115,7 @@ The durable project context lives in [APP_CONTEXT.md](APP_CONTEXT.md). Use that 
 It captures:
 
 - Objective and constraints.
-- Current MVP commands.
+- Current commands.
 - Architecture layers.
 - Storage format.
 - Time handling decisions.
@@ -84,7 +140,7 @@ Run tests with the Python standard library:
 python -m unittest discover -s tests
 ```
 
-The tests cover alarm creation, time validation, next-day rollover, JSON persistence, deletion, due-alarm completion, corrupted storage, formatting, alert output, and CLI storage override behavior.
+The tests cover alarm creation, time validation, duration parsing, next-day rollover, JSON persistence, deletion, edit, snooze, repeat, export/import, due-alarm completion, corrupted storage, formatting, alert output, and CLI storage override behavior.
 
 ## AI-Assisted Development Notes
 
@@ -102,5 +158,5 @@ The implementation follows the requested AI-assisted workflow:
 - Package entry point so users can run `alarm` directly.
 - Atomic writes for safer JSON persistence.
 - File locking if concurrent commands become important.
-- Snooze, repeat, edit, export, and import commands.
 - Optional OS-specific sound command.
+- Richer repeat rules such as weekdays or custom intervals.
